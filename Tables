@@ -19,92 +19,112 @@ live in the basement.
 (Note: Supplies table and tavern IDs must exist in their respective tables)
 
  
-	3.Taverns should also provide services. Services should have a name (ie. Pool or Weapon sharpening). They should also have a status 
-  which should be a manageable list of values (stored in another table). For instance, ‘active’, ‘inactive’ but we may also want to add 
-  others down the line. Such as out of stock or discontinued. The database should also keep track of it with a sales table. This table 
-  will track service, guest, price, date purchased, amount purchased, and the tavern it belongs to.
+	3.Taverns should also provide services. Services should have a name (ie. Pool or Weapon sharpening). They should also have a 
+	status which should be a manageable list of values (stored in another table). For instance, ‘active’, ‘inactive’ but we may also
+	want to add others down the line. Such as out of stock or discontinued. The database should also keep track of it with a sales 
+	table. This table will track service, guest, price, date purchased, amount purchased, and the tavern it belongs to.
+  
+  
+        4.There should be a way to track guests-their names,notes about them,birthdays, cakedays, and status-which can be any kind. 
+	Such as sick, fine, hungry, raging and placid. The guests should have classes and should have levels related to them. 
+	EX. lvl2 mage, lvl 3 fighte, ((linking table)).Also I no longer want to track rats.
 
 
 
 ************************************************************************************************************************************
-Create Database TavernDB
+
+
+
+
+
 
 Create Table TavernInfo
 (
- int Tavern_ID Primary Key ,
- varchar Tavern_Name,
- varchar Tavern_Location,
- varchar Tavern_Owner,
- int Number_Of_Floors
+ Tavern_ID int PRIMARY KEY,
+ Tavern_Name varchar(50),
+ Tavern_Location varchar(500),
+ Tavern_Owner varchar(100),
+ Number_Of_Floors int
 );
 
 Create Table OwnerInfo
 (
- int Owner_ID Primary Key,
- varchar Owner_Name,
- varchar Owner_Role,
- varchar Role_Descrpn,
- Tavern_ID from TavernInfo
+ Owner_ID int Primary Key,
+ Owner_Name varchar(50),
+ Owner_Role varchar(100),
+ Role_Descrpn varchar(500),
+ Tavern_ID  int FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)
 );
 
 Create Table LocationInfo
 (
- int Location_ID primary key,
- varchar Location_Address,
- Tavern_ID from TavernInfo
+ Location_ID int PRIMARY KEY,
+ Location_Address varchar(500),
+ Tavern_ID int FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)
 );
 
 Create Table BasementRats
 (
- Rat_ID,
- varchar Rat_Name,
- Tavern_ID from TavernInfo
+ Rat_ID int PRIMARY KEY,
+ Rat_Name  varchar(50),
+ Tavern_ID int FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)
 ); 
 
 Create Table TavernSupplies
 (
-int Supply_ID,
-int Supply_Unit,
-varchar Item_Name,
-int ItemCount,
-date Date_Last_Updated,
-Tavern_ID from TavernInfo
+ Supply_ID INT PRIMARY KEY,
+ Supply_Unit INT,
+ Item_Name VARCHAR(100),
+ Item_Count INT,
+ Date_Last_Updated DATE,
+ Tavern_ID INT FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)
 );
 
-Create Tavern_Received
+Create Table Tavern_Received
 (
- int Supply_ID,
- int Tavern_ID,
- float Cost,
- int Amount_Received,
- date Date_Received,
- Tavern_ID from TavernInfo
+ Supply_ID INT,
+ Cost decimal,
+ Amount_Received decimal,
+ Date_Received date,
+ Tavern_ID int FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)
 );
 
-Create TableServices
-(int service_ID,
- int service_name,
- Tavern_ID from TavernInfo
+Create Table TableServices
+(
+ service_ID int PRIMARY KEY,
+ service_name varchar(100),
+ Tavern_ID int FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)
  );
  
  Create Table ServiceStatus
  (
-  int service_ID,
-  varchar status_options,
-  service_ID from TableServices
-  );
+  serviceStatus_ID INT PRIMARY KEY,
+  status_options varchar(100),
+  service_ID INT FOREIGN KEY REFERENCES TableServices(service_ID)
+ );
   
   Create Table SalesTable
   ( 
-  int sales_ID,
-  int service_ID,
-  varchar guest_name,
-  float table_price,
-  date purchase_date,
-  float purchase_amount,
-  Tavern_ID from TavernInfo
+  sales_ID INT PRIMARY KEY,
+  service_ID INT FOREIGN KEY REFERENCES TableServices(service_ID),
+  guest_name varchar(100),
+  table_price decimal,
+  purchase_date date,
+  purchase_amount decimal,
+  Tavern_ID int FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)
   );
-  service, guest, price, date purchased, amount purchased, and the tavern 
+
+
+  /*DROP Table If Exists BasementRats;*/
+
+
+
+  DROP Table If Exists BasementRats;
+
+
+ 
+ 
+ 
    
   
 

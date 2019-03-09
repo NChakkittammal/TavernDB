@@ -40,89 +40,92 @@ live in the basement.
 
 Create Table TavernInfo
 (
- Tavern_ID int PRIMARY KEY,
- Tavern_Name varchar(50),
- Tavern_Location varchar(500),
- Tavern_Owner varchar(100),
- Number_Of_Floors int
+ TavernID int PRIMARY KEY,
+ TavernName varchar(50),
+ TavernLocation varchar(500),
+ TavernOwner varchar(100),
+ NumberOfFloors int
 );
 
 Create Table OwnerInfo
 (
- Owner_ID int Primary Key,
- Owner_Name varchar(50),
- Owner_Role varchar(100),
- Role_Descrpn varchar(500),
- Tavern_ID  int FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)
+ OwnerID int Primary Key,
+ OwnerName varchar(50),
+ OwnerRole varchar(100),
+ RoleDescrpn varchar(500),
+ TavernID int
+ /*Tavern_ID  int FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)*/
 );
+
+Alter table OwnerInfo Add Foreign Key(TavernID) References TavernInfo(TavernID);
 
 Create Table LocationInfo
 (
- Location_ID int PRIMARY KEY,
- Location_Address varchar(500),
- Tavern_ID int FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)
+ LocationID int PRIMARY KEY,
+ LocationAddress varchar(500),
+ TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
 );
 
 Create Table BasementRats
 (
- Rat_ID int PRIMARY KEY,
- Rat_Name  varchar(50),
- Tavern_ID int FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)
+ RatID int PRIMARY KEY,
+ RatName  varchar(50),
+ TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
 ); 
+
+Drop table if exists BasementRats;
 
 Create Table TavernSupplies
 (
- Supply_ID INT PRIMARY KEY,
- Supply_Unit INT,
- Item_Name VARCHAR(100),
- Item_Count INT,
- Date_Last_Updated DATE,
- Tavern_ID INT FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)
+ SupplyID INT PRIMARY KEY,
+ SupplyUnit INT,
+ ItemName VARCHAR(100),
+ ItemCount INT,
+ DateLastUpdated DATE,
+ LocationID int FOREIGN KEY REFERENCES LocationInfo(LocationID),
+ TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
 );
 
-Create Table Tavern_Received
+Create Table SupplyReceived
 (
- Supply_ID INT,
- Cost decimal,
- Amount_Received decimal,
+ SupplyID INT,
+ SupplyCost float,
+ Amount_Received float,
  Date_Received date,
- Tavern_ID int FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)
+ LocationID int FOREIGN KEY REFERENCES LocationInfo(LocationID),
+ TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
 );
 
 Create Table TableServices
 (
- service_ID int PRIMARY KEY,
- service_name varchar(100),
- Tavern_ID int FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)
+ serviceID int PRIMARY KEY,
+ servicename varchar(100),
+ LocationID int FOREIGN KEY REFERENCES LocationInfo(LocationID),
+ TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
  );
  
  Create Table ServiceStatus
  (
-  serviceStatus_ID INT PRIMARY KEY,
-  status_options varchar(100),
-  service_ID INT FOREIGN KEY REFERENCES TableServices(service_ID)
+  serviceStatusID INT PRIMARY KEY,
+  statusoptions varchar(100),
+  serviceID int FOREIGN KEY REFERENCES TableServices(serviceID),
+  LocationID int FOREIGN KEY REFERENCES LocationInfo(LocationID),
+  TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
  );
   
   Create Table SalesTable
   ( 
-  sales_ID INT PRIMARY KEY,
-  service_ID INT FOREIGN KEY REFERENCES TableServices(service_ID),
-  guest_name varchar(100),
-  table_price decimal,
-  purchase_date date,
-  purchase_amount decimal,
-  Tavern_ID int FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)
+  salesID INT PRIMARY KEY,
+  guestname varchar(100),
+  tableprice decimal,
+  purchasedate date,
+  purchaseamount decimal,
+  serviceID INT FOREIGN KEY REFERENCES TableServices(serviceID),
+  LocationID int FOREIGN KEY REFERENCES LocationInfo(LocationID),
+  TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
   );
 
-
-  /*DROP Table If Exists BasementRats;*/
-
-
-
-  DROP Table If Exists BasementRats;
-
-
- 
+   
  
  
    

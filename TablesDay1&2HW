@@ -47,6 +47,12 @@ Create Table TavernInfo
  NumberOfFloors int
 );
 
+Insert into TavernInfo
+values
+(1, '33s Tavern', 'East Brunswick', 'Thomas', 1 ),
+(2, 'Gusto Grill', 'East Brunswick', 'Marco',2);
+
+
 Create Table OwnerInfo
 (
  OwnerID int Primary Key,
@@ -85,6 +91,8 @@ Create Table TavernSupplies
  LocationID int FOREIGN KEY REFERENCES LocationInfo(LocationID),
  TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
 );
+
+/*Alter table TavernSupplies Add Foreign Key(TavernID) References TavernInfo(TavernID), Add Foreign Key(LocationID) References LocationInfo(LocationID);*/
 
 Create Table SupplyReceived
 (
@@ -125,7 +133,11 @@ Create Table TableServices
   TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
   );
 
-   
+Insert into SalesTable 
+values
+(1, 'Nishana', 50.00, '2019-3-9', 100.00,1,1,1),
+(2, 'Shebeer', 25.00, '2019-2-5', 75.00,2,2,2);
+
  
  
    

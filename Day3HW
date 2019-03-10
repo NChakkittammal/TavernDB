@@ -1,0 +1,97 @@
+1. The system should also be able to track Rooms. Rooms should have a status and an associated tavern. There should be a way to track 
+Room Stays which will contain a sale, guest, room, date it was stayed in and the rate.
+
+2. Write a query that returns guests with a birthday before 2000. 
+
+3. Write a query to return rooms that cost more than 100 gold a night
+
+4. Write a query that returns UNIQUE guest names.
+
+5. Write a query that returns all guests ordered by name (ascending) Use ASC or DESC after your ORDER BY [col]
+
+6. Write a query that returns the top 10 highest price sales
+
+7. Write a query to return all Lookup Table Names - this is, not the names of the tables but the Names of things like Status/Role/Class,etc.
+(w/ Union)
+
+8. Write a query that returns Guest Classes with Levels and Generate a new column with a label for their level grouping (lvl 1-10, 10-20,
+etc)
+
+9. Write a series of INSERT commands that will insert the statuses of one table into another of your choosing using SELECT statements
+(See our lab in class - The INSERT commands should be generated). It’s ok if the data doesn’t match or make sense! :) Remember, INSERT
+Commands look like: INSERT INTO Table1 (column1, column2) VALUES (column1, column2)
+
+1.
+ Create Table RoomStatus
+ (
+  RoomStatusID int Primary key,
+  RoomStatus varchar(100)
+ );
+ 
+ Insert into RoomStatus 
+values
+(1, 'Occupied'),
+(2, 'Vacant');
+
+ 
+ Create Table RoomSales
+ (
+  RoomSaleID int Primary Key,
+  RoomDateofStay date,
+  RoomGuestName varchar(100),
+  RoomModel varchar(50)
+  );
+
+  Insert into RoomSales 
+values
+(1,'2019-3-9','Nishana','Studio'),
+(2, '2019-2-5', 'Shebeer','Suite');
+
+  Create Table RoomInfo
+ (
+  RoomID int Primary Key,
+  RoomRate float,
+  RoomSaleID int FOREIGN KEY REFERENCES RoomSales(RoomSaleID),
+  RoomStatusID int FOREIGN KEY REFERENCES RoomStatus(RoomStatusID),
+  TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
+ );
+  
+  Insert into RoomSales 
+values
+(1, 100.00,1,1,3),
+(2, 125.00,2,2,4);
+
+
+
+2. Select GuestBday from GuestInfo where GuestBday < '2000-1-1';
+
+3. Select RoomRate from RoomInfo where RoomRate > 100;
+
+4. Select DISTINCT RoomGuestName from RoomSales;
+
+5. Select RoomGuestName from RoomSales order by RoomGuestName ASC;
+
+6. Select TOP 10 * from SalesTable order by tableprice desc;
+
+7. 
+Select TavernName from TavernInfo
+Union
+Select ItemName from TavernSupplies
+Union
+Select serviceName from TableServices
+Union
+Select statusoptions from ServiceStatus
+Union
+Select guestname from SalesTable
+Union
+Select RoomStatus from RoomStatus
+Union
+Select GuestStatus from GuestStatus
+Union
+Select OwnerName from OwnerInfo
+Union
+Select GuestName from GuestInfo;
+
+8. I M NOT SURE :)
+
+9. Insert into RoomSales values(

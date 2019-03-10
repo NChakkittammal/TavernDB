@@ -1,0 +1,17 @@
+USE NChakkittammal_2019;
+Go
+
+Drop Table if exists SalesTable;
+Drop Table if exists ServiceStatus;
+Drop Table if exists SupplyReceived;
+Drop Table if exists TavernSupplies;
+Drop Table if exists GuestInfo;
+Drop Table if exists GuestClassInfo;
+Drop Table if exists GuestLevel;
+Drop Table if exists GuestStatus;
+Drop Table if exists SalesTable;
+Drop Table if exists TableServices;
+Drop Table if exists LocationInfo;
+Drop Table if exists OwnerInfo;
+Drop Table if exists TavernInfo;
+

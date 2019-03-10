@@ -1,0 +1,132 @@
+/* Updated Day 1 HW
+
+*/
+Create Table TavernInfo
+(
+ TavernID int PRIMARY KEY,
+ TavernName varchar(50),
+ TavernLocation varchar(500),
+ TavernOwner varchar(100),
+ NumberOfFloors int
+);
+
+Insert into TavernInfo
+values
+(1, '33s Tavern', 'East Brunswick', 'Thomas', 1 ),
+(2, 'Gusto Grill', 'East Brunswick', 'Marco',2);
+
+
+Create Table OwnerInfo
+(
+ OwnerID int Primary Key,
+ OwnerName varchar(50),
+ OwnerRole varchar(100),
+ RoleDescrpn varchar(500),
+ TavernID int
+ /*Tavern_ID  int FOREIGN KEY REFERENCES TavernInfo(Tavern_ID)*/
+);
+
+Alter table OwnerInfo Add Foreign Key(TavernID) References TavernInfo(TavernID);
+
+Create Table LocationInfo
+(
+ LocationID int PRIMARY KEY,
+ LocationAddress varchar(500),
+ TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
+);
+
+Create Table BasementRats
+(
+ RatID int PRIMARY KEY,
+ RatName  varchar(50),
+ TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
+); 
+
+Drop table if exists BasementRats;
+
+Create Table TavernSupplies
+(
+ SupplyID INT PRIMARY KEY,
+ SupplyUnit INT,
+ ItemName VARCHAR(100),
+ ItemCount INT,
+ DateLastUpdated DATE,
+ LocationID int FOREIGN KEY REFERENCES LocationInfo(LocationID),
+ TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
+);
+
+/*Alter table TavernSupplies Add Foreign Key(TavernID) References TavernInfo(TavernID), Add Foreign Key(LocationID) References LocationInfo(LocationID);*/
+
+Create Table SupplyReceived
+(
+ SupplyID INT,
+ SupplyCost float,
+ Amount_Received float,
+ Date_Received date,
+ LocationID int FOREIGN KEY REFERENCES LocationInfo(LocationID),
+ TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
+);
+
+Create Table TableServices
+(
+ serviceID int PRIMARY KEY,
+ servicename varchar(100),
+ LocationID int FOREIGN KEY REFERENCES LocationInfo(LocationID),
+ TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
+ );
+ 
+ Create Table ServiceStatus
+ (
+  serviceStatusID INT PRIMARY KEY,
+  statusoptions varchar(100),
+  serviceID int FOREIGN KEY REFERENCES TableServices(serviceID),
+  LocationID int FOREIGN KEY REFERENCES LocationInfo(LocationID),
+  TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
+ );
+  
+  Create Table SalesTable
+  ( 
+  salesID INT PRIMARY KEY,
+  guestname varchar(100),
+  tableprice decimal,
+  purchasedate date,
+  purchaseamount decimal,
+  serviceID INT FOREIGN KEY REFERENCES TableServices(serviceID),
+  LocationID int FOREIGN KEY REFERENCES LocationInfo(LocationID),
+  TavernID int FOREIGN KEY REFERENCES TavernInfo(TavernID)
+  );
+
+Insert into SalesTable 
+values
+(1, 'Nishana', 50.00, '2019-3-9', 100.00,1,1,1),
+(2, 'Shebeer', 25.00, '2019-2-5', 75.00,2,2,2);
+
+Create Table GuestInfo
+(
+ GuestID int,
+ GuestName varchar(100),
+ GuestNotes varchar(200),
+ GuestBday date,
+ GuestCakeday date,
+ GuestStatusID int Foreign Key References GuestStatus(GuestStatusID),
+ GuestClassID int Foreign Key References GuestClassInfo(GuestClassID),
+ GuestLevelID int Foreign Key References GuestLevel(GuestLevelID)
+ );
+
+ Create Table GuestStatus
+ (
+ GuestStatusID int Primary Key, 
+ GuestStatus varchar(200),
+ );
+
+ Create Table GuestClassInfo
+ (
+  GuestClassID int Primary Key,
+   GuestClass varchar(100)
+ );
+
+ Create Table GuestLevel
+ (
+  GuestLevelID int Primary Key,
+  GuestLevel varchar(100)
+ );

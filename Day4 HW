@@ -1,0 +1,64 @@
+/*1. Write a query to return users who have admin roles*/
+ Select * from UserInfo where UserRole='Admin';
+ /* 
+2. Write a query to return users who have admin roles and information about their taverns*/ 
+
+  Select  T.[TavernID]
+      ,T.[TavernName]
+      ,T.[TavernLocation]
+	  ,T.[NumberOfFloors]
+	  ,U.[UserID]
+      ,U.[UserName]
+      ,U.[UserRole]
+  from UserInfo U
+      ,TavernInfo T
+  
+  where U.UserRole = 'Admin'
+    and U.TavernID = T.TavernID;
+
+  /*3. Write a query that returns all guests ordered by name (ascending) and 
+  their classes and corresponding levels */
+  Select * from GuestInfo as G 
+				,GuestClassInfo as GCI
+  where G.GuestClassID = GCI.GuestClassID
+  order by G.GuestName asc
+
+  /*
+4. Write a query that returns the top 10 sales in terms of sales price and what the services were*/
+
+   Select Top 10 S.[salesID]
+      ,S.[guestname]
+      ,S.[tableprice]
+      ,S.[purchasedate]
+      ,S.[purchaseamount]
+	  ,TS.[serviceID]
+      ,TS.[servicename]
+	from SalesTable as S
+	     ,TableServices as TS
+
+
+
+
+/*5. Write a query that returns guests with 2 or more classes */
+
+Select GI.[GuestID]
+      ,GI.[GuestName]
+      ,GI.[GuestNotes]
+      ,GI.[GuestBday]
+      ,GI.[GuestCakeday]
+	  ,GCI.[GuestClassID]
+      ,Count(GCI.[GuestClass]) as NumberOfClasses
+	  from GuestInfo as GI
+			  ,GuestClassInfo as GCI
+		where GI.GuestID=GCI.GuestID
+		Group By 
+		GI.[GuestID]
+      ,GI.[GuestName]
+      ,GI.[GuestNotes]
+      ,GI.[GuestBday]
+      ,GI.[GuestCakeday]
+	  ,GCI.[GuestClassID]
+
+	  having Count(GCI.[GuestClass]) >1
+	  ;
+/*

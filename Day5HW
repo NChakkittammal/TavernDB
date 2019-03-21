@@ -1,0 +1,103 @@
+USE NChakkittammal_2019;
+
+/*1. Write a query to return a “report” of all users and their roles */
+
+SELECT UserName, roleName FROM UserInfo
+JOIN RoleInfo ON UserInfo.RoleID = RoleInfo.roleId
+ORDER BY UserName ASC;
+GO
+
+/*
+2. Write a query to return all classes and the count of guests that hold those classes */
+
+SELECT gc.className, COUNT(GuestInfo.guestId) AS NumberOfGuestsWithClass FROM GuestClass 
+JOIN GuestClass as gc ON gc.classId = GuestLevel.classId 
+GROUP BY gc.className;
+GO
+
+/*
+3. Write a query that returns all guests ordered by name (ascending) and their classes and corresponding levels. Add a column that labels them 
+beginner (lvl 1-5), intermediate (5-10) and expert (10+) for their classes (Don’t alter the table for this)*/
+
+SELECT guestName, LevelNumber, className, CASE
+WHEN GuestLevel.LevelNumber BETWEEN 0 AND 5 THEN 'Beginner'
+WHEN GuestLevel.LevelNumber BETWEEN 5 AND 10 THEN 'Intermediate'
+WHEN GuestLevel.LevelNumber >= 11 THEN 'Expert'
+ELSE NULL END
+AS guestExperience FROM GuestInfo,GuestLevel,GuestClass
+JOIN GuestLevel ON GuestInfo.guestId = GuestLevel.guestId
+JOIN GuestClassInfo ON GuestLevel.classId = GuestClass.classId
+ORDER BY guestName ASC
+GO
+
+/*4. Write a function that takes a level and returns a “grouping” from question 3 (e.g. 1-5, 5-10, 10+, etc)*/
+
+IF OBJECT_ID (N'dbo.Groupinglevel', N'FN') IS NOT NULL  
+    DROP FUNCTION dbo.Groupinglevel; 
+GO
+
+CREATE FUNCTION dbo.Groupinglevel(@guestLevel INT)
+	RETURNS VARCHAR(50)
+	AS 
+	BEGIN
+		RETURN
+			CASE
+				WHEN @guestLevel BETWEEN 0 AND 5 THEN 'Beginner'
+				WHEN @guestLevel BETWEEN 5 AND 10 THEN 'Intermediate'
+				WHEN @guestLevel >= 11 THEN 'Expert'
+				ELSE NULL END
+END
+GO
+
+SELECT dbo.Groupinglevel(3)
+GO
+
+
+/*5. Write a function that returns a report of all open rooms (not used) on a particular day (input) and which tavern they belong to */
+
+IF OBJECT_ID (N'dbo.checkVacancy', N'IF') IS NOT NULL  
+    DROP FUNCTION dbo.checkVacancy; 
+GO
+
+CREATE FUNCTION dbo.checkVacancy(@Checkdate DATE)
+RETURNS TABLE
+AS
+RETURN
+(
+SELECT RoomInfo.roomId, tavernName,RoomDateofStay FROM RoomStays
+JOIN RoomInfo ON RoomStays.roomId = RoomInfo.roomId
+JOIN TavernInfo ON RoomInfo.tavernId = TavernInfo.tavernId
+WHERE RoomdateOfStay != @Checkdate
+);
+GO
+
+SELECT *  FROM dbo.checkVacancy('2018-01-10');
+GO
+
+
+/*6. Modify the same function from 5 to instead return a report of prices in a range (min and max prices) - Return Rooms and their taverns based 
+on price inputs*/
+
+IF OBJECT_ID (N'dbo.ReturnPriceRange', N'IF') IS NOT NULL  
+    DROP FUNCTION dbo.ReturnPriceRange; 
+GO
+
+CREATE FUNCTION dbo.ReturnPriceRange(@minPrice float, @maxPrice float)
+RETURNS TABLE
+AS
+RETURN
+(
+SELECT RoomInfo.roomId, roomRate, tavernName FROM RoomStays
+JOIN RoomInfo ON RoomStays.roomId =RoomInfo.roomId
+JOIN TavernInfo ON RoomInfo.tavernId = TavernInfo.tavernId
+WHERE RoomInfo.RoomRate BETWEEN @minPrice AND @maxPrice
+);
+GO
+
+SELECT *  FROM dbo.ReturnPriceRange(99, 199)
+GO
+
+
+
+/*7. Write a command that uses the result from 6 to Create a Room in another tavern that undercuts (is less than) the cheapest room by a penny -
+ thereby making the new room the cheapest one*/

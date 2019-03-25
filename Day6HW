@@ -1,0 +1,103 @@
+/*Write a stored procedure that takes a class name and returns all guests that have any levels of that class*/
+
+
+CREATE PROCEDURE GetGuestsAnyClass
+
+@ClassName varchar(64)
+
+AS
+BEGIN
+(
+	SELECT GI.Guestname, GL.LevelDescription FROM GuestInfo AS GI , GuestLevel AS GL
+	INNER JOIN GuestClassAssignment AS GCA
+	  ON GI.GuestID = GCA.GuestID
+		--INNER JOIN GuestClassAssignment GCA ON GCA.GuestClassId = GC.GuestClassID
+		WHERE GC.Classname = @ClassName
+)
+END
+GO
+
+SELECT * FROM dbo.GetGuestsAnyClass('Fighter');
+
+/*Write a stored procedure that takes a guest id and returns the total that guest spent on services*/
+
+GO
+CREATE PROCEDURE GetTotalAmount
+	@Guest varchar(255),
+	@TotalAmount float OUT
+AS
+BEGIN
+	DECLARE @guestId int;
+	SELECT @guestId = GuestID FROM GuestInfo WHERE GuestID = @Guest;
+
+	SELECT @TotalAmount = SUM(tableprice) FROM TableSales WHERE guestID = @guestId GROUP BY ;
+END
+GO
+
+DECLARE @TotalAmount float;
+EXEC GetTotalAmount @Guest = 'Nishana Mohamed', @TotalAmount = @TotalAmount OUTPUT;
+SELECT @TotalAmount AS AmountPaid;
+
+/*Write a stored procedure that takes a level and an optional argument that determines whether the procedure returns guests of that level and higher or that level and lower*/
+
+
+
+/*Write a stored procedure that deletes a Tavern ( don’t run it yet or rollback your transaction if you do )*/
+
+CREATE PROCEDURE DeleteTavern
+@tavernName VARCHAR(100)
+AS 
+
+DELETE FROM TavernInfo WHERE tavernName = @tavernName
+
+SELECT * FROM TavernInfo;
+SELECT * FROM UserInfo;
+SELECT * FROM RoomInfo;
+SELECT * FROM TavernServices;
+GO
+
+EXEC DeleteTavern @tavernName = "33's Tavern";
+
+
+
+--Write a trigger that watches for deleted taverns and use it to remove taverns, supplies, rooms, and services tied to it
+
+CREATE TRIGGER DeletedTaverns
+ON Taverns
+AFTER DELETE 
+AS BEGIN
+ Declare @TempTavernId int;
+  select @TempTavernId = TavernId from deleted;
+    DELETE from TavernSupply where TavernId = @TempTavernId ;
+	DELETE from TavernServices where TavernId = @TempTavernId;
+	DELETE from RoomInfo where TavernId = @TempTavernId;
+
+END
+
+GO
+
+EXEC DeletedTaverns
+@InputTavernName = " " 
+
+--Write a stored procedure that uses the function from the last assignment that returns open rooms with their prices, and automatically book the lowest price room with a guest for one day
+
+create procedure booklowestpriceroom @passdate date 
+as 
+begin	
+	declare @minprice decimal(18,2);
+	declare @roomid int;
+	--Get lowest price
+	set @minprice=(select MIN(RoomRate) as minprice from (select * from RoomInfo where RoomId NOT IN 
+					(select roomid from RoomSales where date=@passdate)) as q);
+
+	--Get lowest-price room
+	set @roomid=(select Roomid from RoomInfo where RoomRate=@minprice  
+				AND RoomInfo.RoomId NOT IN 
+				(select RoomId from RoomSales where date=@passdate));
+
+	--Create new booking
+	insert into RoomSales (RoomSaleID,guestid,roomid,CheckinDate,RoomRate) values (2,2,@roomid,getdate(),@minprice);
+
+
+Write a trigger that watches for new bookings and adds a new sale for the guest for a service (for free if you can in your schema)
+
